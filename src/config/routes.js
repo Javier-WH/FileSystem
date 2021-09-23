@@ -23,18 +23,37 @@ router.get("/getAddress", (req, res) => {
 
 router.get("/getFile", (req, res) => {
     if (req.query.file) {
-        file = `${req.query.file}`;
+        file = req.query.file;
 
         if (file[0] != "/") {
             file = "\\" + file;
         }
 
         fileAddress = baseAddress + file;
-        fileAddress = fileAddress.replace(/\//g, "\\")
+        fileAddress = fileAddress.replace(/\//g, "\\");
         console.log(`descargado ${fileAddress}`);
         res.download(fileAddress);
 
     }
+})
+
+router.get("/getFolder", (req, res) => {
+
+    let folderName = req.query.folderName;
+    let folderAddress = "";
+
+
+    if (folderName[0] != "/") {
+        folderName = "\\" + folderName;
+    }
+
+    folderAddress = baseAddress + folderName;
+    folderAddress = folderAddress.replace(/\//g, "\\");
+    console.log(folderAddress);
+
+
+
+
 })
 
 router.post("/mkdir", (req, res) => {

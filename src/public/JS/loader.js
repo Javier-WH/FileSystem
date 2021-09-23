@@ -118,6 +118,30 @@ function downloadFile(url, name) {
     );
 }
 
+function downloadFolder(url, name) {
+    fetch(`/getFolder?folderName=${url}`).then(data => {
+        return data.blob();
+    }).then(
+        response => {
+            message.innerText = `Descargando ${url}, por favor espere...`;
+            const dataType = response.type;
+            const binaryData = [];
+            binaryData.push(response);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: dataType }));
+            downloadLink.setAttribute('download', name);
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            downloadLink.remove();
+            setTimeout(() => {
+                message.innerText = "";
+            }, 2000);
+        }
+    );
+}
+
+
+
 
 ////////////////////////////////
 //FUNCION PARA CREAR DIRECTORIOS
@@ -167,9 +191,11 @@ fileContainer.addEventListener("click", function(e) {
             }
         }
     } else {
-        SELECTED = object[file];
-        removeSelected();
-        e.target.classList.add("selected");
+        if (e.target.id != fileContainer.id) {
+            SELECTED = object[file];
+            removeSelected();
+            e.target.classList.add("selected");
+        }
     }
 
 
@@ -222,6 +248,19 @@ btnDownload.addEventListener("click", () => {
             }
             downloadFile(address + "/" + SELECTED.name, SELECTED.name);
         }
+    }
+
+    if (SELECTED.type == "folder") {
+
+        if (address == "") {
+            downloadFolder(SELECTED.name, SELECTED.name);
+        } else {
+            if (address[0] == "/") {
+                address.substring(1);
+            }
+            downloadFolder(address + "/" + SELECTED.name, SELECTED.name);
+        }
+
     }
 
 })
