@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileSistem</title>
+    <link rel="stylesheet" href="CSS/style.css">
+    <script src="JS/loader.js" defer></script>
+</head>
+
+<body>
+    <div id="message-box">
+
+    </div>
+    <div id="container-btn">
+        <button id="btn-regresar"> 
+            <img src="IMG/back.png" alt="" id="back-icon">
+            Regresar
+        </button>
+        <div id="displayed-address">
+
+        </div>
+        <button id="make-folder"><img src="IMG/newFolder.png" alt="" id="btn-newFolder-icon"></button>
+    </div>
+
+
+
+    <div id="fileContainer"></div>
+
+
+    <div id="new-folder-window" class="invisible">
+        <div id="window-folder-container">
+            <img src="IMG/newFolder.png" alt="" id="newFolder-icon">
+            <span id="new-folder-title">Crear Nueva Carpeta</span>
+            <div id="data-folder-form">
+                <label for="input-folder-name">Nombre de la carpeta</label>
+                <input type="text" id="input-folder-name" autocomplete="off">
+                <button id="btn-create-folder" disabled>Crear</button>
+                <button id="btn-cancel-folder">Cancelar</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="delete-file-window" class="invisible">
+        <span>¿Esta seguro que desea eliminar el archivo?</span>
+        <span>Esta acción NO se puede revertir</span>
+        <button id="btn-delete">Eliminar</button>
+        <button id="btn-delete-cancelar">Cancelar</button>
+        <span id="delete-timer">Espere 5</span>
+    </div>
+</body>
+
+</html>

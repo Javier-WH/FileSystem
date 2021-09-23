@@ -1,0 +1,4 @@
+@echo off
+D:
+cd D:\FileSystem\src
+node app.js
