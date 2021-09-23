@@ -1,9 +1,6 @@
 const fs = require("fs");
 
 
-// let files = fs.readdirSync("C:\\wamp64\\www\\CSSTEST");
-
-
 function getFiles(address) {
     try {
 
@@ -23,15 +20,21 @@ function getFiles(address) {
         }
 
         fileObject += "}";
-
-        // console.log(fileObject);
-        // return JSON.parse(fileObject);
         return fileObject;
     } catch (err) {
         return { "Error": "Dirección Invalida" };
     }
 }
 
+function deleteFile(url) {
+
+    try {
+        fs.unlinkSync(url);
+
+    } catch (err) {
+        console.error(err);
+    }
+}
 
 
 function makeFolder(url) {
@@ -44,4 +47,15 @@ function makeFolder(url) {
 }
 
 
-module.exports = { getFiles, makeFolder };
+function deleteFolder(url) {
+    fs.rmdir(url, { recursive: true }, (err) => {
+        if (err) {
+            console.error(err);
+        }
+        console.log(`Se ha eliminado la carpeta ${url}`);
+    });
+
+}
+
+
+module.exports = { getFiles, makeFolder, deleteFile, deleteFolder };

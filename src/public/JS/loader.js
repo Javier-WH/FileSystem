@@ -1,13 +1,16 @@
 const fileContainer = document.getElementById("fileContainer");
-const btnRegresar = document.getElementById("btn-regresar");
 const displayedAddress = document.getElementById("displayed-address");
 const message = document.getElementById("message-box");
-const btnMakeFolder = document.getElementById("make-folder");
-const btnCreateFolder = document.getElementById("btn-create-folder");
 const newFolderWindow = document.getElementById("new-folder-window");
 const folderBox = document.getElementById("input-folder-name");
 const deleteWindow = document.getElementById("delete-file-window");
+
+const deleteWindowBntDelete = document.getElementById("btn-delete");
+const btnRegresar = document.getElementById("btn-regresar");
+const btnMakeFolder = document.getElementById("make-folder");
+const btnCreateFolder = document.getElementById("btn-create-folder");
 const btnDownload = document.getElementById("download");
+const btnDelete = document.getElementById("delete");
 let object;
 let address = '';
 let guide = [];
@@ -118,6 +121,8 @@ function downloadFile(url, name) {
     );
 }
 
+//funcion para descargar carpetas
+
 function downloadFolder(url, name) {
     fetch(`/getFolder?folderName=${url}`).then(data => {
         return data.blob();
@@ -158,6 +163,31 @@ async function makeDir(url) {
 
 }
 
+
+/////////////////////////
+//funcion para eliminar directorios
+
+async function deleteDir(url) {
+    let data = new FormData
+    data.append("address", url);
+
+    let response = await fetch("/rddir", {
+        method: "DELETE",
+        body: data
+    })
+
+    let res = await response.text();
+
+    if (res == "OK") {
+        getAdress(address);
+    }
+
+}
+
+
+
+
+///////////////////////////
 function removeSelected() {
     document.querySelectorAll(".file").forEach(element => {
         element.classList.remove("selected");
@@ -265,27 +295,42 @@ btnDownload.addEventListener("click", () => {
 
 })
 
-// fileContainer.addEventListener('contextmenu', function(e) {
-//     e.preventDefault();
-//     let file = e.target.id;
+//////////////////////////////////////
+//evento boton borrar
 
-//     deleteWindow.classList.toggle("invisible");
-//     // if (object[file].type == "folder") {
-//     //     guide.push(object[file].name);
-//     //     address += "/" + object[file].name;
-//     //     if (address[0] == "/") {
-//     //         address.substring(1);
-//     //     }
-//     //     getAdress(address);
-//     // } else {
-//     //     if (address == "") {
-//     //         downloadFile(object[file].name, object[file].name);
-//     //     } else {
-//     //         if (address[0] == "/") {
-//     //             address.substring(1);
-//     //         }
-//     //         downloadFile(address + "/" + object[file].name, object[file].name);
-//     //     }
-//     // }
+btnDelete.addEventListener("click", () => {
+    if (SELECTED != "") {
+        deleteWindowBntDelete.disabled = true;
+        let time = 5;
 
-// })
+        let interval = setInterval(() => {
+            if (time <= 0) {
+                deleteWindowBntDelete.disabled = false;
+                clearInterval(interval);
+            }
+            document.getElementById("delete-timer").innerText = `Espere ${time} segundos`;
+            time--;
+            if (deleteWindow.classList.contains("invisible")) {
+                clearInterval(interval);
+            }
+        }, 1000);
+        deleteWindow.classList.toggle("invisible");
+    }
+
+})
+
+document.getElementById("btn-delete-cancelar").addEventListener("click", () => {
+    deleteWindow.classList.toggle("invisible");
+    deleteWindowBntDelete.disabled = true;
+})
+
+deleteWindowBntDelete.addEventListener("click", () => {
+    let folderURL = "";
+    if (SELECTED.type == "folder") {
+        folderURL = address + "/" + SELECTED.name;
+        folderURL = folderURL.substring(1);
+        deleteDir(folderURL);
+    }
+    deleteWindow.classList.toggle("invisible");
+    deleteWindowBntDelete.disabled = true;
+})
