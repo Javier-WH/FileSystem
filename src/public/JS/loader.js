@@ -7,9 +7,11 @@ const btnCreateFolder = document.getElementById("btn-create-folder");
 const newFolderWindow = document.getElementById("new-folder-window");
 const folderBox = document.getElementById("input-folder-name");
 const deleteWindow = document.getElementById("delete-file-window");
+const btnDownload = document.getElementById("download");
 let object;
 let address = '';
 let guide = [];
+let SELECTED = "";
 
 
 //FUNCION PARA NAVEGAR POR EL SISTEMA DE DIRECTORIOS
@@ -132,28 +134,44 @@ async function makeDir(url) {
 
 }
 
+function removeSelected() {
+    document.querySelectorAll(".file").forEach(element => {
+        element.classList.remove("selected");
+    });
+
+
+}
+
 //EVENTOS
 ///////////////////////////////////////
 //ESTE EVENTO ESTA ATENTO CUANDO SE DA CLICK SOBRE UN ARCHIVO O CARPETA, ABRE LA CARPETA O DESCARGA EL ARCHIVO RESPECTIVAMENTE
 fileContainer.addEventListener("click", function(e) {
     let file = e.target.id;
-    if (object[file].type == "folder") {
-        guide.push(object[file].name);
-        address += "/" + object[file].name;
-        if (address[0] == "/") {
-            address.substring(1);
-        }
-        getAdress(address);
-    } else {
-        if (address == "") {
-            downloadFile(object[file].name, object[file].name);
-        } else {
+
+    if (e.target.classList.contains("selected")) {
+        if (object[file].type == "folder") {
+            guide.push(object[file].name); //para mapear el regreso
+            address += "/" + object[file].name;
             if (address[0] == "/") {
                 address.substring(1);
             }
-            downloadFile(address + "/" + object[file].name, object[file].name);
+            getAdress(address);
+        } else {
+            if (address == "") {
+                downloadFile(object[file].name, object[file].name);
+            } else {
+                if (address[0] == "/") {
+                    address.substring(1);
+                }
+                downloadFile(address + "/" + object[file].name, object[file].name);
+            }
         }
+    } else {
+        SELECTED = object[file];
+        removeSelected();
+        e.target.classList.add("selected");
     }
+
 
 })
 
@@ -169,6 +187,7 @@ btnRegresar.addEventListener("click", () => {
 //////////////////////////
 //EVENTO PARA EL BOTON CREAR CARPETA
 btnMakeFolder.addEventListener("click", () => {
+    folderBox.focus();
     newFolderWindow.classList.toggle("invisible");
 })
 document.getElementById("btn-cancel-folder").addEventListener("click", () => {
@@ -189,27 +208,45 @@ folderBox.addEventListener("keyup", () => {
     }
 })
 
-fileContainer.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-    let file = e.target.id;
+////////////////////////////////
+//evento boton descargar
 
-    deleteWindow.classList.toggle("invisible");
-    // if (object[file].type == "folder") {
-    //     guide.push(object[file].name);
-    //     address += "/" + object[file].name;
-    //     if (address[0] == "/") {
-    //         address.substring(1);
-    //     }
-    //     getAdress(address);
-    // } else {
-    //     if (address == "") {
-    //         downloadFile(object[file].name, object[file].name);
-    //     } else {
-    //         if (address[0] == "/") {
-    //             address.substring(1);
-    //         }
-    //         downloadFile(address + "/" + object[file].name, object[file].name);
-    //     }
-    // }
+btnDownload.addEventListener("click", () => {
+
+    if (SELECTED.type == "file") {
+        if (address == "") {
+            downloadFile(SELECTED.name, SELECTED.name);
+        } else {
+            if (address[0] == "/") {
+                address.substring(1);
+            }
+            downloadFile(address + "/" + SELECTED.name, SELECTED.name);
+        }
+    }
 
 })
+
+// fileContainer.addEventListener('contextmenu', function(e) {
+//     e.preventDefault();
+//     let file = e.target.id;
+
+//     deleteWindow.classList.toggle("invisible");
+//     // if (object[file].type == "folder") {
+//     //     guide.push(object[file].name);
+//     //     address += "/" + object[file].name;
+//     //     if (address[0] == "/") {
+//     //         address.substring(1);
+//     //     }
+//     //     getAdress(address);
+//     // } else {
+//     //     if (address == "") {
+//     //         downloadFile(object[file].name, object[file].name);
+//     //     } else {
+//     //         if (address[0] == "/") {
+//     //             address.substring(1);
+//     //         }
+//     //         downloadFile(address + "/" + object[file].name, object[file].name);
+//     //     }
+//     // }
+
+// })
