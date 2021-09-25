@@ -2,7 +2,6 @@ const express = require("express");
 const path = require("path");
 const zipper = require("zip-local");
 const files = require(path.join(__dirname, "files.js"));
-
 const router = express.Router();
 
 
@@ -10,11 +9,31 @@ const router = express.Router();
 const baseAddress = "D:\\Respaldo Milagros";
 // const baseAddress = "D:\\Jdownloader";
 
+
+
+
+
+router.post("/upload", (req, res) => {
+
+    let fileName = "\\" + req.file.originalname;
+    let route = req.body.route.replace(/\//g, "\\");
+    let oldPath = "D:\\FileSystem\\fileContainer" + fileName;
+    let newPath = baseAddress + route + fileName;
+
+    files.moveFile(oldPath, newPath, () => {
+        res.send("OK");
+    });
+
+});
+
+
+
 router.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../index.html"));
 })
 
 router.get("/getAddress", (req, res) => {
+
     if (req.query.address) {
         res.send(files.getFiles(baseAddress + `\\${req.query.address}`));
     } else {
@@ -51,7 +70,6 @@ router.get("/getFolder", (req, res) => {
     folderAddress = baseAddress + folderName;
     folderAddress = folderAddress.replace(/\//g, "\\");
 
-
     zipper.zip(folderAddress, function(error, zipped) {
 
         if (!error) {
@@ -79,6 +97,8 @@ router.post("/mkdir", (req, res) => {
     let name = req.body.name;
     let folderAddress = '';
 
+
+
     if (address == "") {
         folderAddress = baseAddress + "\\" + name;
     } else {
@@ -97,8 +117,23 @@ router.delete("/rddir", (req, res) => {
     let folderAddress = req.body.address;
     folderAddress = baseAddress + "\\" + folderAddress;
     folderAddress = folderAddress.replace(/\//g, "\\");
-    files.deleteFolder(folderAddress);
-    res.send("OK");
+    files.deleteFolder(folderAddress, () => {
+        res.send("OK")
+    });
+
 })
+
+router.delete("/delete", (req, res) => {
+
+    let fileAddress = (baseAddress + req.body.address).replace(/\//g, "\\");
+
+    console.log(fileAddress);
+    files.deleteFile(fileAddress);
+
+    res.send("OK");
+
+})
+
+
 
 module.exports = router;

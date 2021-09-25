@@ -20,8 +20,10 @@ function getFiles(address) {
         }
 
         fileObject += "}";
+
         return fileObject;
     } catch (err) {
+        console.log(address)
         return { "Error": "Dirección Invalida" };
     }
 }
@@ -41,21 +43,30 @@ function makeFolder(url) {
     if (!fs.existsSync(url)) {
         fs.mkdirSync(url);
         console.log(`Carpeta creada en la direccion ${url}`)
-        return "Carpeta creada correctamente";
+        return "OK";
     }
     return "Una Carpeta con ese nombre ya existe";
 }
 
 
-function deleteFolder(url) {
+function deleteFolder(url, callback) {
     fs.rmdir(url, { recursive: true }, (err) => {
         if (err) {
             console.error(err);
         }
+        console.log("url: " + url);
         console.log(`Se ha eliminado la carpeta ${url}`);
+        callback();
     });
 
 }
 
+function moveFile(oldPath, newPath, callback) {
+    fs.rename(oldPath, newPath, () => {
+        callback();
+    })
 
-module.exports = { getFiles, makeFolder, deleteFile, deleteFolder };
+}
+
+
+module.exports = { getFiles, makeFolder, deleteFile, deleteFolder, moveFile };

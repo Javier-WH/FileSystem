@@ -129,6 +129,7 @@
     margin-bottom: 20px;
 }
 
+#upload-window,
 #new-folder-window {
     position: absolute;
     left: 10px;
@@ -137,19 +138,6 @@
     height: 160px;
     border: 3px solid black;
     background-color: rgb(245, 221, 177);
-}
-
-#btn-create-folder,
-#btn-cancel-folder {
-    width: 70px;
-    margin-right: 10px;
-    margin-bottom: 5px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-}
-
-.invisible {
-    display: none;
 }
 
 #delete-file-window {
@@ -162,6 +150,26 @@
     background-color: rgb(177, 0, 0);
     color: white;
     text-align: center;
+}
+
+#btn-save-file,
+#btn-save-cancel,
+#btn-create-folder,
+#btn-cancel-folder {
+    width: 70px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#button-container {
+    width: 100%;
+    text-align: center;
+}
+
+.invisible {
+    display: none;
 }
 
 #delete-file-window span {
@@ -190,6 +198,19 @@
 
 #delete-img {
     height: 43px;
+}
+
+#upload-window p {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#file {
+    display: block;
+    margin-left: 20px;
+    margin-bottom: 20px;
 }
 
 @media (max-width: 500px) {

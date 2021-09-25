@@ -7,9 +7,26 @@ const multer = require("multer");
 const form = multer();
 const app = express();
 
+const storage = multer.diskStorage({
+    destination: "fileContainer",
+    filename: (req, file, cb) => {
+        cb(null, file.originalname)
+    }
+})
+
+
+app.use(multer({
+    storage,
+    dest: "fileContainer"
+}).single("file"));
+
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(form.array());
+// app.use(form.array());
+
+
+
 
 dotenv.config({ path: path.join(__dirname, "env/.env") });
 

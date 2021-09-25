@@ -26,6 +26,8 @@
         <button id="upload" class="btn"><img src="IMG/upload.png" alt="" class="btn-icon"></button>
         <button id="download" class="btn"><img src="IMG/download.png" alt="" class="btn-icon"></button>
         <button id="delete" class="btn"><img src="IMG/delete.png" alt="" class="btn-icon" id="delete-img"></button>
+
+
     </div>
 
 
@@ -51,10 +53,22 @@
     <div id="delete-file-window" class="invisible">
         <span>¿Esta seguro que desea eliminar el archivo?</span>
         <span>Esta acción NO se puede revertir</span>
-        <button id="btn-delete" disabled>Eliminar</button>
+        <button id="btn-delete">Eliminar</button>
         <button id="btn-delete-cancelar">Cancelar</button>
         <span id="delete-timer">Espere 5 segundos</span>
     </div>
+
+    <div id="upload-window" class="invisible">
+        <p>Selecciona el archivo que deseas guardar</p>
+        <!-- <form action="/upload" method="POST" enctype="multipart/form-data"> -->
+        <input type="file" name="file" id="file">
+        <div id="button-container">
+            <button type="submit" id="btn-save-file">Guardar</button>
+            <button id="btn-save-cancel">Cancelar</button>
+        </div>
+        <!-- </form> -->
+    </div>
+
 </body>
 
 </html>

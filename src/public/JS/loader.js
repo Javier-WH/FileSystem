@@ -1,10 +1,13 @@
 const fileContainer = document.getElementById("fileContainer");
 const displayedAddress = document.getElementById("displayed-address");
 const message = document.getElementById("message-box");
-const newFolderWindow = document.getElementById("new-folder-window");
 const folderBox = document.getElementById("input-folder-name");
+const newFolderWindow = document.getElementById("new-folder-window");
 const deleteWindow = document.getElementById("delete-file-window");
+const uploadWindow = document.getElementById("upload-window");
+const uploadFile = document.getElementById("file");
 
+const btnUpload = document.getElementById("upload");
 const deleteWindowBntDelete = document.getElementById("btn-delete");
 const btnRegresar = document.getElementById("btn-regresar");
 const btnMakeFolder = document.getElementById("make-folder");
@@ -151,15 +154,25 @@ function downloadFolder(url, name) {
 ////////////////////////////////
 //FUNCION PARA CREAR DIRECTORIOS
 async function makeDir(url) {
-    let data = new FormData();
-    data.append("address", address);
-    data.append("name", url);
+
+    let data = {
+        address: address,
+        name: url
+    }
 
     let response = await fetch("/mkdir", {
         method: "POST",
-        body: data
+        headers: {
+            "Accept": "application/json",
+            "content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
     })
+    let res = await response.text();
 
+    if (res = "OK") {
+        getAdress(address);
+    }
 
 }
 
@@ -168,23 +181,79 @@ async function makeDir(url) {
 //funcion para eliminar directorios
 
 async function deleteDir(url) {
-    let data = new FormData
-    data.append("address", url);
-
+    let data = {
+        address: url,
+    }
     let response = await fetch("/rddir", {
         method: "DELETE",
-        body: data
+        headers: {
+            "Accept": "application/json",
+            "content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
     })
 
-    let res = await response.text();
+    let r = await response.text();
 
-    if (res == "OK") {
+    if (r == "OK") {
+
         getAdress(address);
     }
 
 }
+////////////////////////////
+/// funcion eleiminaar archivo
 
 
+async function deleteFile(url) {
+    let data = {
+        address: url
+    }
+
+    let res = await fetch("/delete", {
+        method: "DELETE",
+        headers: {
+            "Accept": "application/json",
+            "content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+
+    let response = await res.text();
+    if (response == "OK") {
+        getAdress(address);
+    }
+
+
+
+
+
+
+}
+
+
+
+
+//////////////////////
+//funcion subirArchivo
+
+
+async function upload() {
+    let data = new FormData();
+    data.append("file", uploadFile.files[0]);
+    data.append("route", address)
+
+    let rs = await fetch("/upload", {
+        method: "POST",
+        body: data
+    })
+
+    let response = await rs.text();
+
+    if (response == "OK") {
+        getAdress(address);
+    }
+}
 
 
 ///////////////////////////
@@ -192,9 +261,16 @@ function removeSelected() {
     document.querySelectorAll(".file").forEach(element => {
         element.classList.remove("selected");
     });
+}
+
+function hideAllWindow() {
+    newFolderWindow.classList.add("invisible");
+    deleteWindow.classList.add("invisible");
+    uploadWindow.classList.add("invisible");
 
 
 }
+
 
 //EVENTOS
 ///////////////////////////////////////
@@ -220,6 +296,7 @@ fileContainer.addEventListener("click", function(e) {
                 downloadFile(address + "/" + object[file].name, object[file].name);
             }
         }
+        SELECTED = "";
     } else {
         if (e.target.id != fileContainer.id) {
             SELECTED = object[file];
@@ -235,6 +312,7 @@ fileContainer.addEventListener("click", function(e) {
 //////////////////////////////////////
 //ESTE EVENTO RETROCEDE EN UN NIVEL EL DIRECTORIO EN CUESTION
 btnRegresar.addEventListener("click", () => {
+    SELECTED = "";
     address = address.replace("/" + guide[guide.length - 1], "");
     guide.pop();
     getAdress(address);
@@ -243,6 +321,7 @@ btnRegresar.addEventListener("click", () => {
 //////////////////////////
 //EVENTO PARA EL BOTON CREAR CARPETA
 btnMakeFolder.addEventListener("click", () => {
+    hideAllWindow();
     folderBox.focus();
     newFolderWindow.classList.toggle("invisible");
 })
@@ -253,7 +332,7 @@ btnCreateFolder.addEventListener("click", () => {
     makeDir(folderBox.value);
     folderBox.value = "";
     btnCreateFolder.disabled = true;
-    getAdress(address);
+
     newFolderWindow.classList.toggle("invisible");
 })
 folderBox.addEventListener("keyup", () => {
@@ -299,8 +378,9 @@ btnDownload.addEventListener("click", () => {
 //evento boton borrar
 
 btnDelete.addEventListener("click", () => {
+    hideAllWindow();
     if (SELECTED != "") {
-        deleteWindowBntDelete.disabled = true;
+        // deleteWindowBntDelete.disabled = true;
         let time = 5;
 
         let interval = setInterval(() => {
@@ -326,11 +406,70 @@ document.getElementById("btn-delete-cancelar").addEventListener("click", () => {
 
 deleteWindowBntDelete.addEventListener("click", () => {
     let folderURL = "";
+    let fileURL = "";
     if (SELECTED.type == "folder") {
         folderURL = address + "/" + SELECTED.name;
         folderURL = folderURL.substring(1);
         deleteDir(folderURL);
     }
+    if (SELECTED.type == "file") {
+        fileURL = address + "/" + SELECTED.name;
+        deleteFile(fileURL);
+    }
     deleteWindow.classList.toggle("invisible");
     deleteWindowBntDelete.disabled = true;
 })
+
+
+///////////////////////////////
+//evento boton upload
+
+btnUpload.addEventListener("click", () => {
+    hideAllWindow();
+    uploadWindow.classList.toggle("invisible");
+})
+
+document.getElementById("btn-save-cancel").addEventListener("click", (e) => {
+    e.preventDefault();
+    uploadWindow.classList.add("invisible");
+})
+
+document.getElementById("btn-save-file").addEventListener("click", () => {
+    if (uploadFile.value != "") {
+        upload();
+        hideAllWindow();
+        uploadFile.value = "";
+    }
+
+})
+
+
+
+
+
+//////////////
+
+
+
+
+//evento para destargetear 
+
+window.addEventListener("click", function(e) {
+
+    if (e.target.tagName == "HTML" || e.target.id == "fileContainer" ||
+        e.target.id == "container-btn" || e.target.id == "message-box" ||
+        e.target.id == "displayed-address" || e.target.id == "btn-regresar") {
+        removeSelected();
+        SELECTED = "";
+        hideAllWindow();
+    }
+})
+
+
+////// 
+
+// window.addEventListener("keypress", (e) => {
+
+
+
+// })
