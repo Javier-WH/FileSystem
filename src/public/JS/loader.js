@@ -380,7 +380,7 @@ btnDownload.addEventListener("click", () => {
 btnDelete.addEventListener("click", () => {
     hideAllWindow();
     if (SELECTED != "") {
-        // deleteWindowBntDelete.disabled = true;
+        deleteWindowBntDelete.disabled = true;
         let time = 5;
 
         let interval = setInterval(() => {
@@ -466,10 +466,11 @@ window.addEventListener("click", function(e) {
 })
 
 
-////// 
+document.getElementById("logo").addEventListener("click", () => {
 
-// window.addEventListener("keypress", (e) => {
+    getAdress(address);
+})
 
-
-
-// })
+let refreshWindow = setInterval(() => {
+    getAdress(address);
+}, 2000);
